@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <div class="wrap">
+        <div class="container">
+            <form action="number6.php" method="post">
+                <label for="name">Название :</label>
+                <input type="text" id="name" name="name" value="Круговая этикетка" readonly><br><br>
+                <label for="quantity">Количество:</label>
+                <input type="number" id="quantity" name="quantity" min="1" max="9999" value="1"><br><br>
+                <label for="price">Цена:</label>
+                <input type="text" id="price" name="price" value="15" readonly><br><br>
+                <label for="vat">НДС:</label>
+                <input type="text" id="vat" name="vat" value="12" readonly><br><br>
+                <input type="submit" name="submit" value="Рассчитать">
+                <p>Итоговая цена: <span id="total_price"></span></p>
+                <p>Скидка: <span id="discount"></span></p>
+            <input type="hidden" id="totalPriceInput" name="total_price"> <!-- поле для передачи итоговой цены в базу данных -->
+        </form>
+        
+        <script>
+            const quantityInput = document.getElementById('quantity');
+            const priceInput = document.getElementById('price');
+            const vatInput = document.getElementById('vat');
+            const totalPriceOutput = document.getElementById('total_price');
+            const discountOutput = document.getElementById('discount');
+            const totalPriceInput = document.getElementById('totalPriceInput');
+        
+            function calculateTotalPrice() {
+                const quantity = parseInt(quantityInput.value);
+                const price = parseFloat(priceInput.value);
+                const vat = parseFloat(vatInput.value);
+        
+                let discountAmount = 0;
+                if (quantity >= 5) {
+                    const discountGroup = Math.floor(quantity / 5);
+                    let discountPercent = discountGroup > 5 ? 30 : discountGroup * 5;
+                    discountAmount = price * quantity * discountPercent / 100;
+                }
+        
+                const priceWithoutVat = price * quantity;
+                const vatAmount = priceWithoutVat * vat / 100;
+                const priceWithVat = priceWithoutVat + vatAmount;
+                const totalPrice = priceWithVat - discountAmount;
+        
+                discountOutput.innerText = discountAmount.toFixed(2) + ' тг.';
+                totalPriceOutput.innerText = totalPrice.toFixed(2) + ' тг.';
+                totalPriceInput.value = totalPrice.toFixed(2);
+            }
+        
+            calculateTotalPrice();
+        
+            quantityInput.addEventListener('input', calculateTotalPrice);
+            priceInput.addEventListener('input', calculateTotalPrice);
+            vatInput.addEventListener('input', calculateTotalPrice);
+        </script>
+              
+              <p>При покупке 5 и более штук товара скидка увеличивается до 5% (максимальная скидка 30%).</p>
+              
+              
+              <style>
+                form label,
+                form input {
+                  display: block;
+                  margin-bottom: 10px;
+                }
+              </style>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
